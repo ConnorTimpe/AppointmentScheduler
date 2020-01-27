@@ -5,14 +5,19 @@
  */
 package Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -20,6 +25,9 @@ import javafx.scene.control.TextField;
  * @author conno
  */
 public class LogInScreenController implements Initializable {
+
+    Stage stage;
+    Parent scene;
 
     @FXML
     private Label UsernameLabel;
@@ -40,8 +48,38 @@ public class LogInScreenController implements Initializable {
     private Label PleaseLogInLabel;
 
     @FXML
-    void OnActionLogIn(ActionEvent event) {
+    void OnActionLogIn(ActionEvent event) throws IOException {
+        if (validCredentials()) {
+            System.out.println("logged in");
+            goToMainScreen(event);
+        } else {
 
+        }
+
+        //Test username / password
+        //connect to database
+        //Change screens
+        //error message if info is wrong
+    }
+
+    private boolean validCredentials() {
+        return true;
+    }
+
+    private void goToMainScreen(ActionEvent event) throws IOException {
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainScreen.fxml"));
+        Controller.MainScreenController controller = new Controller.MainScreenController();
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+    
+    private void createErrorMessage(String alertTitle, String alertContent){
+        
     }
 
     /**
@@ -49,7 +87,8 @@ public class LogInScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        //Initialize resource bundle
+        //
     }
 
 }

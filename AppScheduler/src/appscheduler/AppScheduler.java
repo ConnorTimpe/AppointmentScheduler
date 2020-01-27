@@ -29,6 +29,7 @@ public class AppScheduler extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+        
 
     }
 
