@@ -16,15 +16,20 @@ import javafx.stage.Stage;
  * @author conno
  */
 public class AppScheduler extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/View/LogInScreen.fxml"));
-        
+
+        //Load Log In Screen
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LogInScreen.fxml"));
+        Controller.LogInScreenController controller = new Controller.LogInScreenController();
+        loader.setController(controller);
+        Parent root = loader.load();
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
+
     }
 
     /**
@@ -33,10 +38,5 @@ public class AppScheduler extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
-    public static void changeScreens(String destination)
-    {
-        
-    }
-    
+
 }
