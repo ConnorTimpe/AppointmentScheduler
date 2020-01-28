@@ -24,14 +24,12 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author conno
+ * @author connor
  */
 public class LogInScreenController implements Initializable {
 
     Stage stage;
     Parent scene;
-    private final String USERNAME = "test";
-    private final String PASSWORD = "test";
 
     @FXML
     private Label UsernameLabel;
@@ -60,6 +58,9 @@ public class LogInScreenController implements Initializable {
             createErrorMessage();
         }
     }
+
+    private final String USERNAME = "test";
+    private final String PASSWORD = "test";
 
     private boolean validCredentials() {
         return LogInUsernameText.getText().equals(USERNAME)
@@ -100,7 +101,7 @@ public class LogInScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //Uncomment below to set default locale to Japanese
-        Locale.setDefault(new Locale("jp", "JP"));
+        //Locale.setDefault(new Locale("jp", "JP"));
 
         localizeText();
     }

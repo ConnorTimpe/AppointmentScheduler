@@ -5,6 +5,7 @@
  */
 package appscheduler;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,14 +14,17 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author conno
+ * @author connor
  */
 public class AppScheduler extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        //Load Log In Screen
+        loadLogInScreen(stage);
+    }
+
+    private void loadLogInScreen(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LogInScreen.fxml"));
         Controller.LogInScreenController controller = new Controller.LogInScreenController();
         loader.setController(controller);
@@ -29,8 +33,6 @@ public class AppScheduler extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-        
-
     }
 
     /**
