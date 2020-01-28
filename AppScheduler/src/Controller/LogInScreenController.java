@@ -7,6 +7,7 @@ package Controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -81,9 +82,11 @@ public class LogInScreenController implements Initializable {
         stage.show();
     }
 
+    ResourceBundle loginResourceBundle;
+
     private void createErrorMessage() {
-        String alertTitle = "Error"; //loginScreenRB.getString("alertTitle")
-        String alertContent = "Incorrect login info"; //loginScreenRB.getString("alertContent")
+        String alertTitle = loginResourceBundle.getString("alertTitle");
+        String alertContent = loginResourceBundle.getString("alertContent");
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(alertTitle);
@@ -96,8 +99,20 @@ public class LogInScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //Initialize resource bundle
-        //
+        //Uncomment below to set default locale to Japanese
+        Locale.setDefault(new Locale("jp", "JP"));
+
+        localizeText();
+    }
+
+    private void localizeText() {
+        Locale locale = Locale.getDefault();
+        loginResourceBundle = ResourceBundle.getBundle("Resources.LoginScreen", locale);
+
+        UsernameLabel.setText(loginResourceBundle.getString("UsernameLabel"));
+        PasswordLabel.setText(loginResourceBundle.getString("PasswordLabel"));
+        LogInButton.setText(loginResourceBundle.getString("LogInButton"));
+        PleaseLogInLabel.setText(loginResourceBundle.getString("PleaseLogInLabel"));
     }
 
 }
