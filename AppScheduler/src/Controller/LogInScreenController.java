@@ -29,7 +29,6 @@ import javafx.stage.Stage;
 public class LogInScreenController implements Initializable {
 
     Stage stage;
-    Parent scene;
 
     @FXML
     private Label UsernameLabel;
@@ -74,8 +73,6 @@ public class LogInScreenController implements Initializable {
     private void goToMainScreen(ActionEvent event) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainScreen.fxml"));
-        Controller.MainScreenController controller = new Controller.MainScreenController();
-        loader.setController(controller);
         Parent root = loader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);

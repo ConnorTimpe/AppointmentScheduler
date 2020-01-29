@@ -26,8 +26,6 @@ public class AppScheduler extends Application {
 
     private void loadLogInScreen(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LogInScreen.fxml"));
-        Controller.LogInScreenController controller = new Controller.LogInScreenController();
-        loader.setController(controller);
         Parent root = loader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);

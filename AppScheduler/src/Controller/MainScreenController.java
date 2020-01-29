@@ -5,20 +5,28 @@
  */
 package Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
  *
- * @author conno
+ * @author Connor Timpe
  */
 public class MainScreenController implements Initializable {
+
+    Stage stage;
 
     @FXML
     private TableView<?> CustomerTableView;
@@ -56,27 +64,28 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void OnActionExit(ActionEvent event) {
-
+        //Disconnect from database
+        System.exit(0);
     }
 
     @FXML
-    void OnActionGoToAddApp(ActionEvent event) {
-
+    void OnActionGoToAddApp(ActionEvent event) throws IOException {
+        changeScreens(event, "/View/AddAppointment.fxml");
     }
 
     @FXML
-    void OnActionGoToAddCustomer(ActionEvent event) {
-
+    void OnActionGoToAddCustomer(ActionEvent event) throws IOException {
+        changeScreens(event, "/View/AddCustomer.fxml");
     }
 
     @FXML
-    void OnActionGoToModifyApp(ActionEvent event) {
-
+    void OnActionGoToModifyApp(ActionEvent event) throws IOException {
+        changeScreens(event, "/View/UpdateAppointment.fxml");
     }
 
     @FXML
-    void OnActionGoToModifyCustomer(ActionEvent event) {
-
+    void OnActionGoToModifyCustomer(ActionEvent event) throws IOException {
+        changeScreens(event, "/View/UpdateCustomer.fxml");
     }
 
     @FXML
@@ -94,12 +103,30 @@ public class MainScreenController implements Initializable {
 
     }
 
+    private void changeScreens(ActionEvent event, String destination) throws IOException {
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    private void createCustomerTable() {
+
+    }
+
+    private void createAppointmentTable() {
+
+    }
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+
     }
 
 }
