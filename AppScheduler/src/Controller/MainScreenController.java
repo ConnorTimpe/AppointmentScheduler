@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -65,10 +66,27 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    void OnActionDeleteCustomer(ActionEvent event) {
-
+    void OnActionDeleteCustomer(ActionEvent event) throws SQLException {
+        Customer selectedCustomer = CustomerTableView.getSelectionModel().getSelectedItem();
+        if(selectedCustomer == null)
+        {
+            String alertTitle = "Error";
+            String alertContent = "Please select a customer to delete.";
+            createErrorMessage(alertTitle, alertContent);
+        }
+        else{
+        Database.deleteCustomer(selectedCustomer);
+        customerList.remove(selectedCustomer);
+        }
     }
-
+    
+     private void createErrorMessage(String alertTitle, String alertContent) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+        alert.showAndWait();
+    }
+    
     @FXML
     void OnActionExit(ActionEvent event) {
         //Disconnect from database
@@ -120,28 +138,29 @@ public class MainScreenController implements Initializable {
         stage.show();
     }
 
-    private void createCustomerTable() {
-
+    
+    static ObservableList<Customer> customerList = FXCollections.observableArrayList();
+    
+    private void createCustomerTable() throws SQLException {
+            customerList.clear();
+            CustomerTableView.getItems().clear();  
+            customerList = Database.buildCustomerList();
+            CustomerTableView.setItems(customerList);
     }
 
+    //static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+    
     private void createAppointmentTable() {
 
     }
 
-    
-    static ObservableList<Customer> customerList = FXCollections.observableArrayList();
-    //static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
-    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            customerList.clear();
-            CustomerTableView.getItems().clear();  
-            customerList = Database.buildCustomerList();
-            CustomerTableView.setItems(customerList);
+            createCustomerTable();
         } catch (SQLException ex) {
             Logger.getLogger(MainScreenController.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -47,28 +47,69 @@ public class Database {
         
         Statement nameStatement = connection.createStatement();
         Statement addressStatement = connection.createStatement();
+        Statement cityStatement = connection.createStatement();
+        Statement countryStatement = connection.createStatement();
         
-        String sqlStmtGetCustomerNameId = "SELECT customerName, customerId FROM customer";
-        String sqlStmtGetCustomerAddressPhone = "SELECT address, phone  FROM address";
-        ResultSet rsName = nameStatement.executeQuery(sqlStmtGetCustomerNameId);
-        ResultSet rsAddress = addressStatement.executeQuery(sqlStmtGetCustomerAddressPhone);
+        String sqlStmtGetCustomerTableData = "SELECT customerName, customerId, active FROM customer";
+        String sqlStmtGetCustomerAddressTableData = "SELECT addressId, address, address2, postalCode, phone  FROM address";
+        String sqlStmtGetCustomerCityTableData = "SELECT cityId, city FROM city";
+        String sqlStmtGetCustomerCountryTableData = "SELECT countryId, country FROM country";
         
-        while(rsName.next() && rsAddress.next())
+        ResultSet rsCustomer = nameStatement.executeQuery(sqlStmtGetCustomerTableData);
+        ResultSet rsAddress = addressStatement.executeQuery(sqlStmtGetCustomerAddressTableData);
+        ResultSet rsCity = cityStatement.executeQuery(sqlStmtGetCustomerCityTableData);
+        ResultSet rsCountry = countryStatement.executeQuery(sqlStmtGetCustomerCountryTableData);
+        
+        while(rsCustomer.next() && rsAddress.next() && rsCity.next() && rsCountry.next())
         {
             Customer newCustomer = new Customer();
-            newCustomer.setName(rsName.getString("customerName"));
-            newCustomer.setId(rsName.getInt("customerId"));
+            
+            newCustomer.setName(rsCustomer.getString("customerName"));
+            newCustomer.setId(rsCustomer.getInt("customerId"));
+            newCustomer.setActive(rsCustomer.getInt("active"));
+            
+            newCustomer.setAddressId(rsAddress.getInt("addressId"));
             newCustomer.setAddress(rsAddress.getString("address"));
+            newCustomer.setAddress2(rsAddress.getString("address2"));
+            newCustomer.setPostalCode(rsAddress.getString("postalCode"));
             newCustomer.setPhoneNumber(rsAddress.getString("phone"));
+            
+            newCustomer.setCityId(rsCity.getInt("cityId"));
+            newCustomer.setCity(rsCity.getString("city"));
+            
+            newCustomer.setCountryId(rsCountry.getInt("countryId"));
+            newCustomer.setCountry(rsCountry.getString("country"));
+           
             customerList.add(newCustomer);
         }
         
         return customerList;
     }
     
-    public static void deleteCustomer(int customerId) //String?
+    public static void deleteCustomer(Customer customer) throws SQLException
     {
-
+        int customerId = customer.getId();
+        int addressId = customer.getAddressId();
+        int cityId =  customer.getCityId();
+        int countryId = customer.getCountryId();
+        
+        Statement statement = connection.createStatement();
+        
+        //Delete customer record
+        String sqlStmtDelete = "DELETE FROM customer WHERE customerId = " + customerId + ";";
+        statement.executeUpdate(sqlStmtDelete);
+        
+        //Delete address record
+        sqlStmtDelete = "DELETE FROM address WHERE addressId = " + addressId + ";";
+        statement.executeUpdate(sqlStmtDelete);
+        
+        //Delete city record
+        sqlStmtDelete = "DELETE FROM city WHERE cityId = " + cityId + ";";
+        statement.executeUpdate(sqlStmtDelete);
+        
+        //Delete country record
+        sqlStmtDelete = "DELETE FROM country WHERE countryId = " + countryId + ";";
+        statement.executeUpdate(sqlStmtDelete);
     }
 
     public static void addCustomer(Customer customer) throws SQLException {
