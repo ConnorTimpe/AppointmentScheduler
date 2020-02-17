@@ -5,9 +5,16 @@
  */
 package Controller;
 
+import Model.Customer;
+import Model.Database;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,16 +36,16 @@ public class MainScreenController implements Initializable {
     Stage stage;
 
     @FXML
-    private TableView<?> CustomerTableView;
+    private TableView<Customer> CustomerTableView;
 
     @FXML
-    private TableColumn<?, ?> CustomerNameCol;
+    private TableColumn<Customer, String> CustomerNameCol;
 
     @FXML
-    private TableColumn<?, ?> CustomerAddressCol;
+    private TableColumn<Customer, String> CustomerAddressCol;
 
     @FXML
-    private TableColumn<?, ?> CustomerPhonenumberCol;
+    private TableColumn<Customer, String> CustomerPhonenumberCol;
 
     @FXML
     private TableView<?> AppointmentTableView;
@@ -103,7 +110,7 @@ public class MainScreenController implements Initializable {
 
     }
 
-    private void changeScreens(ActionEvent event, String destination) throws IOException {
+    public void changeScreens(ActionEvent event, String destination) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
         Parent root = loader.load();
@@ -121,12 +128,23 @@ public class MainScreenController implements Initializable {
 
     }
 
+    
+    static ObservableList<Customer> customerList = FXCollections.observableArrayList();
+    //static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        try {
+            customerList.clear();
+            CustomerTableView.getItems().clear();  
+            customerList = Database.buildCustomerList();
+            CustomerTableView.setItems(customerList);
+        } catch (SQLException ex) {
+            Logger.getLogger(MainScreenController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

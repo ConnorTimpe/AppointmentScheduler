@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -25,6 +27,8 @@ public class Database {
     private static final String PASSWORD = "53688574512";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     public static Connection connection;
+    
+    static ObservableList<Customer> customerList = FXCollections.observableArrayList();
 
     public static void makeConnection() throws ClassNotFoundException, SQLException {
         Class.forName(DRIVER);
@@ -37,6 +41,31 @@ public class Database {
         System.out.println("Connection closed");
     }
 
+    public static ObservableList<Customer> buildCustomerList() throws SQLException
+    {
+        customerList.clear();
+        
+        Statement nameStatement = connection.createStatement();
+        Statement addressStatement = connection.createStatement();
+        
+        String sqlStmtGetCustomerNameId = "SELECT customerName, customerId FROM customer";
+        String sqlStmtGetCustomerAddressPhone = "SELECT address, phone  FROM address";
+        ResultSet rsName = nameStatement.executeQuery(sqlStmtGetCustomerNameId);
+        ResultSet rsAddress = addressStatement.executeQuery(sqlStmtGetCustomerAddressPhone);
+        
+        while(rsName.next() && rsAddress.next())
+        {
+            Customer newCustomer = new Customer();
+            newCustomer.setName(rsName.getString("customerName"));
+            newCustomer.setId(rsName.getInt("customerId"));
+            newCustomer.setAddress(rsAddress.getString("address"));
+            newCustomer.setPhoneNumber(rsAddress.getString("phone"));
+            customerList.add(newCustomer);
+        }
+        
+        return customerList;
+    }
+    
     public static void deleteCustomer(int customerId) //String?
     {
 
