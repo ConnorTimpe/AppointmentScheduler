@@ -10,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +29,7 @@ public class Database {
     private static final String PASSWORD = "53688574512";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     public static Connection connection;
-    
+
     static ObservableList<Customer> customerList = FXCollections.observableArrayList();
 
     public static void makeConnection() throws ClassNotFoundException, SQLException {
@@ -41,72 +43,69 @@ public class Database {
         System.out.println("Connection closed");
     }
 
-    public static ObservableList<Customer> buildCustomerList() throws SQLException
-    {
+    public static ObservableList<Customer> buildCustomerList() throws SQLException {
         customerList.clear();
-        
+
         Statement nameStatement = connection.createStatement();
         Statement addressStatement = connection.createStatement();
         Statement cityStatement = connection.createStatement();
         Statement countryStatement = connection.createStatement();
-        
+
         String sqlStmtGetCustomerTableData = "SELECT customerName, customerId, active FROM customer";
         String sqlStmtGetCustomerAddressTableData = "SELECT addressId, address, address2, postalCode, phone  FROM address";
         String sqlStmtGetCustomerCityTableData = "SELECT cityId, city FROM city";
         String sqlStmtGetCustomerCountryTableData = "SELECT countryId, country FROM country";
-        
+
         ResultSet rsCustomer = nameStatement.executeQuery(sqlStmtGetCustomerTableData);
         ResultSet rsAddress = addressStatement.executeQuery(sqlStmtGetCustomerAddressTableData);
         ResultSet rsCity = cityStatement.executeQuery(sqlStmtGetCustomerCityTableData);
         ResultSet rsCountry = countryStatement.executeQuery(sqlStmtGetCustomerCountryTableData);
-        
-        while(rsCustomer.next() && rsAddress.next() && rsCity.next() && rsCountry.next())
-        {
+
+        while (rsCustomer.next() && rsAddress.next() && rsCity.next() && rsCountry.next()) {
             Customer newCustomer = new Customer();
-            
+
             newCustomer.setName(rsCustomer.getString("customerName"));
             newCustomer.setId(rsCustomer.getInt("customerId"));
             newCustomer.setActive(rsCustomer.getInt("active"));
-            
+
             newCustomer.setAddressId(rsAddress.getInt("addressId"));
             newCustomer.setAddress(rsAddress.getString("address"));
             newCustomer.setAddress2(rsAddress.getString("address2"));
             newCustomer.setPostalCode(rsAddress.getString("postalCode"));
             newCustomer.setPhoneNumber(rsAddress.getString("phone"));
-            
+
             newCustomer.setCityId(rsCity.getInt("cityId"));
             newCustomer.setCity(rsCity.getString("city"));
-            
+
             newCustomer.setCountryId(rsCountry.getInt("countryId"));
             newCustomer.setCountry(rsCountry.getString("country"));
-           
+
             customerList.add(newCustomer);
         }
-        
+
         return customerList;
     }
-    
-    public static void deleteCustomer(Customer customer) throws SQLException
-    {
+
+    public static void deleteCustomer(Customer customer) throws SQLException {
         int customerId = customer.getId();
         int addressId = customer.getAddressId();
-        int cityId =  customer.getCityId();
+        int cityId = customer.getCityId();
         int countryId = customer.getCountryId();
-        
+
         Statement statement = connection.createStatement();
-        
+
         //Delete customer record
         String sqlStmtDelete = "DELETE FROM customer WHERE customerId = " + customerId + ";";
         statement.executeUpdate(sqlStmtDelete);
-        
+
         //Delete address record
         sqlStmtDelete = "DELETE FROM address WHERE addressId = " + addressId + ";";
         statement.executeUpdate(sqlStmtDelete);
-        
+
         //Delete city record
         sqlStmtDelete = "DELETE FROM city WHERE cityId = " + cityId + ";";
         statement.executeUpdate(sqlStmtDelete);
-        
+
         //Delete country record
         sqlStmtDelete = "DELETE FROM country WHERE countryId = " + countryId + ";";
         statement.executeUpdate(sqlStmtDelete);
@@ -116,7 +115,6 @@ public class Database {
 
         Statement statement = connection.createStatement();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
 
         String name = customer.getName();
@@ -232,12 +230,87 @@ public class Database {
         statement.executeUpdate(sqlStatement);
     }
 
-    public static void addAppointment() //Appointment appointment
-    {
+    static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
+    public static ObservableList<Appointment> buildAppointmentList() throws SQLException {
+        appointmentList.clear();
+
+        Statement statement = connection.createStatement();
+        String sqlStmtApp = "SELECT * FROM appointment";
+        ResultSet rs = statement.executeQuery(sqlStmtApp);
+
+        while (rs.next()) {
+            Appointment newApp = new Appointment();
+
+            newApp.setAppointmentId(rs.getInt("appointmentId"));
+            newApp.setCustomerId(rs.getInt("customerId"));
+            newApp.setUserId(rs.getInt("userId"));
+            newApp.setTitle(rs.getString("title"));
+            newApp.setDescription(rs.getString("description"));
+            newApp.setLocation(rs.getString("location"));
+            newApp.setContact(rs.getString("contact"));
+            newApp.setType(rs.getString("type"));
+            newApp.setUrl(rs.getString("url"));
+
+            Instant startInstant = rs.getTimestamp("start").toInstant();
+            Instant endInstant = rs.getTimestamp("end").toInstant();
+
+            LocalDateTime startTime = LocalDateTime.ofInstant(startInstant, ZoneOffset.UTC);
+            LocalDateTime endTime = LocalDateTime.ofInstant(endInstant, ZoneOffset.UTC);
+
+            DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm MM/dd/yyyy");
+            String formattedStart = startTime.format(formater);
+
+            newApp.setStartTime(startTime);
+            newApp.setEndTime(endTime);
+            newApp.setFormattedStart(formattedStart);
+        }
+
+        return appointmentList;
     }
 
-    public static void deleteAppointment(int appointmentId) {
+    public static void addAppointment(Appointment appointment) throws SQLException {
+        int customerId = appointment.getCustomerId();
+        int userId = appointment.getUserId();
+        String title = appointment.getTitle();
+        String description = appointment.getDescription();
+        String location = appointment.getLocation();
+        String contact = appointment.getContact();
+        String type = appointment.getType();
+        String url = Integer.toString(customerId);
+        LocalDateTime createDate = LocalDateTime.now();
+        String createdBy = "Test user";
+        LocalDateTime startTime = appointment.getStartTime();
+        LocalDateTime endTime = appointment.getEndTime();
+        String lastUpdateBy = "Test user";
 
+        Statement statement = connection.createStatement();
+
+        //Add into Appointment table
+        String sqlAppStmt = "INSERT INTO appointment(customerId, userId, title, description, location, contact, type, url, "
+                + "start, end, createDate, createdBy, lastUpdateBy) "
+                + "VALUES("
+                + "'" + customerId + "', "
+                + "'" + userId + "', "
+                + "'" + title + "', "
+                + "'" + description + "', "
+                + "'" + location + "', "
+                + "'" + contact + "', "
+                + "'" + type + "', "
+                + "'" + url + "', "
+                + "'" + startTime + "', "
+                + "'" + endTime + "', "
+                + "'" + createDate + "', "
+                + "'" + createdBy + "', "
+                + "'" + lastUpdateBy + "')";
+
+        statement.executeUpdate(sqlAppStmt);
+    }
+
+    public static void deleteAppointment(Appointment appointment) throws SQLException {
+        Statement statement = connection.createStatement();
+        int appointmentId = appointment.getAppointmentId();
+        String sqlStmtDelete = "DELETE FROM appointment WHERE appointmentId = " + appointmentId + ";";
+        statement.executeUpdate(sqlStmtDelete);
     }
 }
