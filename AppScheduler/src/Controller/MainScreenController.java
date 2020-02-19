@@ -61,7 +61,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     private TableColumn<Appointment, Instant> AppDateCol;
-    //check cell value factories
+    
 
     @FXML
     void OnActionGoToAddCustomer(ActionEvent event) throws IOException {
@@ -109,21 +109,6 @@ public class MainScreenController implements Initializable {
         stage.show();
     }
 
-    static ObservableList<Customer> customerList = FXCollections.observableArrayList();
-
-    private void createCustomerTable() throws SQLException {
-        customerList.clear();
-        CustomerTableView.getItems().clear();
-        customerList = Database.buildCustomerList();
-        CustomerTableView.setItems(customerList);
-    }
-
-    static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
-
-    private void createAppointmentTable() {
-
-    }
-
     @FXML
     void OnActionDeleteCustomer(ActionEvent event) throws SQLException {
         Customer selectedCustomer = CustomerTableView.getSelectionModel().getSelectedItem();
@@ -146,9 +131,9 @@ public class MainScreenController implements Initializable {
             String alertContent = "Please select an appointment to delete.";
             createErrorMessage(alertTitle, alertContent);
         }//else if selected appointment has an assigned customer -- make error message
-        else{
-        Database.deleteAppointment(selectedAppointment);
-        appointmentList.remove(selectedAppointment);
+        else {
+            Database.deleteAppointment(selectedAppointment);
+            appointmentList.remove(selectedAppointment);
         }
     }
 
@@ -167,6 +152,26 @@ public class MainScreenController implements Initializable {
         System.exit(0);
     }
 
+    static ObservableList<Customer> customerList = FXCollections.observableArrayList();
+
+    private void createCustomerTable() throws SQLException {
+        customerList.clear();
+        CustomerTableView.getItems().clear();
+        
+        customerList = Database.buildCustomerList();
+        CustomerTableView.setItems(customerList);
+    }
+
+    static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+
+    private void createAppointmentTable() throws SQLException {
+        appointmentList.clear();
+        AppointmentTableView.getItems().clear();
+
+        appointmentList = Database.buildAppointmentList();
+        AppointmentTableView.setItems(appointmentList);
+    }
+
     /**
      * Initializes the controller class.
      */
@@ -174,6 +179,7 @@ public class MainScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             createCustomerTable();
+            createAppointmentTable();
         } catch (SQLException ex) {
             Logger.getLogger(MainScreenController.class.getName()).log(Level.SEVERE, null, ex);
         }

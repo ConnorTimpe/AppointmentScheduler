@@ -242,8 +242,10 @@ public class Database {
         while (rs.next()) {
             Appointment newApp = new Appointment();
 
+            int customerId = rs.getInt("customerId");
+
             newApp.setAppointmentId(rs.getInt("appointmentId"));
-            newApp.setCustomerId(rs.getInt("customerId"));
+            newApp.setCustomerId(customerId);
             newApp.setUserId(rs.getInt("userId"));
             newApp.setTitle(rs.getString("title"));
             newApp.setDescription(rs.getString("description"));
@@ -251,6 +253,15 @@ public class Database {
             newApp.setContact(rs.getString("contact"));
             newApp.setType(rs.getString("type"));
             newApp.setUrl(rs.getString("url"));
+
+            Statement customerStatement = connection.createStatement();
+            String sqlGetCustomerId = "SELECT customerName FROM customer WHERE customerId = " + customerId + ";";
+            ResultSet rsCustomerName = customerStatement.executeQuery(sqlGetCustomerId);
+            while(rsCustomerName.next())
+            {
+                newApp.setCustomerName(rsCustomerName.getString("customerName"));
+            }
+            
 
             Instant startInstant = rs.getTimestamp("start").toInstant();
             Instant endInstant = rs.getTimestamp("end").toInstant();
@@ -264,6 +275,8 @@ public class Database {
             newApp.setStartTime(startTime);
             newApp.setEndTime(endTime);
             newApp.setFormattedStart(formattedStart);
+
+            appointmentList.add(newApp);
         }
 
         return appointmentList;
