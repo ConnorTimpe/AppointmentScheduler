@@ -137,6 +137,7 @@ public class AddAppointmentController implements Initializable {
         app.setLocation(location);
         app.setContact(contact);
         app.setType(type);
+
         app.setStartTime(appStartDateTime);
         app.setEndTime(appEndDateTime);
 
@@ -191,7 +192,7 @@ public class AddAppointmentController implements Initializable {
                 minutesList.add(i);
             }
         }
-        
+
         AppStartTimeHourText.setItems(hoursList);
         AppEndTimeHourText.setItems(hoursList);
 

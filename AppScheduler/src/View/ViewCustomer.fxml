@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.UpdateCustomerController">
+<AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewCustomerController">
    <children>
       <Label layoutX="57.0" layoutY="19.0" prefHeight="50.0" prefWidth="184.0" text="Update Customer">
          <font>
@@ -121,7 +121,6 @@
             </TextField>
          </children>
       </VBox>
-      <Button layoutX="327.0" layoutY="478.0" mnemonicParsing="false" onAction="#onActionSaveUpdatedCustomer" prefHeight="27.0" prefWidth="60.0" text="Save" />
       <Button layoutX="407.0" layoutY="478.0" mnemonicParsing="false" onAction="#OnActionReturnToMainMenu" prefHeight="27.0" prefWidth="60.0" text="Cancel" />
       <RadioButton fx:id="CustomerActiveRBYes" layoutX="176.0" layoutY="419.0" mnemonicParsing="false" selected="true" text="Yes">
          <toggleGroup>

@@ -5,9 +5,26 @@
  */
 package Controller;
 
+import Model.Customer;
+import Model.Database;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -16,12 +33,118 @@ import javafx.fxml.Initializable;
  */
 public class UpdateCustomerController implements Initializable {
 
+    Stage stage;
+    Customer customerToModify;
+
+    @FXML
+    private TextField CustomerNameText;
+
+    @FXML
+    private TextField CustomerPhoneNumberText;
+
+    @FXML
+    private TextField CustomerAddress1Text;
+
+    @FXML
+    private TextField CustomerAddress2Text;
+
+    @FXML
+    private TextField CustomerPostalCodeText;
+
+    @FXML
+    private TextField CustomerCityText;
+
+    @FXML
+    private TextField CustomerCountryText;
+
+    @FXML
+    private RadioButton CustomerActiveRBYes;
+
+    @FXML
+    private RadioButton CustomerActiveRBNo;
+
+    @FXML
+    private ToggleGroup activeRbToggleGroup;
+
+    @FXML
+    void onActionSaveUpdatedCustomer(ActionEvent event) throws IOException, SQLException {
+        //Get information from textFields
+        String name = CustomerNameText.getText();
+        String phoneNumber = CustomerPhoneNumberText.getText();
+        String address = CustomerAddress1Text.getText();
+        String address2 = CustomerAddress2Text.getText();
+        String postalCode = CustomerPostalCodeText.getText();
+        String city = CustomerCityText.getText();
+        String country = CustomerCountryText.getText();
+        int active;
+
+        if (CustomerActiveRBYes.isSelected()) {
+            active = 1;
+        } else {
+            active = 0;
+        }
+
+        customerToModify.setName(name);
+        customerToModify.setPhoneNumber(phoneNumber);
+        customerToModify.setAddress(address);
+        customerToModify.setAddress2(address2);
+        customerToModify.setPostalCode(postalCode);
+        customerToModify.setCity(city);
+        customerToModify.setCountry(country);
+        customerToModify.setActive(active);
+
+        Database.modifyCustomer(customerToModify);
+
+        changeScreens(event, "/View/MainScreen.fxml");
+    }
+
+    @FXML
+    void OnActionReturnToMainMenu(ActionEvent event) throws IOException {
+        String alertTitle = "Confirm";
+        String alertContent = "Are you sure you'd like to go to the main menu? All changed data will be lost.";
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            changeScreens(event, "/View/MainScreen.fxml");
+        }
+    }
+
+    private void changeScreens(ActionEvent event, String destination) throws IOException {
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    private void initializeFields(Customer customerToModify) {
+        CustomerNameText.setText(customerToModify.getName());
+        CustomerPhoneNumberText.setText(customerToModify.getPhoneNumber());
+        CustomerAddress1Text.setText(customerToModify.getAddress());
+        CustomerAddress2Text.setText(customerToModify.getAddress2());
+        CustomerPostalCodeText.setText(customerToModify.getPostalCode());
+        CustomerCityText.setText(customerToModify.getCity());
+        CustomerCountryText.setText(customerToModify.getCountry());
+        if (customerToModify.getActive() == 1) {
+            CustomerActiveRBYes.setSelected(true);
+        } else {
+            CustomerActiveRBNo.setSelected(true);
+        }
+    }
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+        customerToModify = MainScreenController.customerToModify;
+        initializeFields(customerToModify);
+    }
+
 }

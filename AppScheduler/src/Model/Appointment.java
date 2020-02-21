@@ -53,6 +53,7 @@ public class Appointment {
         createdBy = null;
         lastUpdateBy = null;
         formattedStart = null;
+        date = null;
     }
 
     public int getAppointmentId() {

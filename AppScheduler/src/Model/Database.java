@@ -142,6 +142,32 @@ public class Database {
 
     }
 
+    public static void modifyCustomer(Customer customer) throws SQLException {
+        Statement statement = connection.createStatement();
+
+        //Update country table
+        String sqlStmtUpdate = "UPDATE country SET country = '" + customer.getCountry() + "' WHERE countryId = " + customer.getCountryId();
+        statement.executeUpdate(sqlStmtUpdate);
+
+        //Update city table
+        sqlStmtUpdate = "UPDATE city SET city = '" + customer.getCity() + "' WHERE cityId = " + customer.getCityId();
+        statement.executeUpdate(sqlStmtUpdate);
+
+        //Update address table
+        sqlStmtUpdate = "UPDATE address SET address = '" + customer.getAddress()
+                + "', address2 = '" + customer.getAddress2()
+                + "', postalCode = '" + customer.getPostalCode()
+                + "', phone = '" + customer.getPhoneNumber()
+                + "' WHERE addressId = " + customer.getAddressId();
+        statement.executeUpdate(sqlStmtUpdate);
+
+        //Update customer table
+        sqlStmtUpdate = "UPDATE customer SET customerName = '" + customer.getName()
+                + "', active = '" + customer.getActive()
+                + "' WHERE customerId = " + customer.getId();
+        statement.executeUpdate(sqlStmtUpdate);
+    }
+
     private static void addToCountryTable(Statement statement, String country, LocalDateTime now,
             String currentUser, String lastUpdateBy) throws SQLException {
         String sqlStatement = "INSERT INTO country(country, createDate, createdBy, lastUpdateBy)"
@@ -257,11 +283,9 @@ public class Database {
             Statement customerStatement = connection.createStatement();
             String sqlGetCustomerId = "SELECT customerName FROM customer WHERE customerId = " + customerId + ";";
             ResultSet rsCustomerName = customerStatement.executeQuery(sqlGetCustomerId);
-            while(rsCustomerName.next())
-            {
+            while (rsCustomerName.next()) {
                 newApp.setCustomerName(rsCustomerName.getString("customerName"));
             }
-            
 
             Instant startInstant = rs.getTimestamp("start").toInstant();
             Instant endInstant = rs.getTimestamp("end").toInstant();
@@ -316,6 +340,32 @@ public class Database {
                 + "'" + createDate + "', "
                 + "'" + createdBy + "', "
                 + "'" + lastUpdateBy + "')";
+
+        statement.executeUpdate(sqlAppStmt);
+    }
+
+    public static void modifyAppointment(Appointment appointment) throws SQLException {
+        int customerId = appointment.getCustomerId();
+        int userId = appointment.getUserId();
+        String title = appointment.getTitle();
+        String description = appointment.getDescription();
+        String location = appointment.getLocation();
+        String contact = appointment.getContact();
+        String type = appointment.getType();
+        String url = Integer.toString(customerId);
+        LocalDateTime createDate = LocalDateTime.now();
+        String createdBy = "Test user";
+        LocalDateTime startTime = appointment.getStartTime();
+        LocalDateTime endTime = appointment.getEndTime();
+        String lastUpdateBy = "Test user";
+
+        Statement statement = connection.createStatement();
+
+        String sqlAppStmt = "UPDATE appointment SET customerId = '" + customerId + "', userId = '" + userId + "', "
+                + "title = '" + title + "', description = '" + description + "', location = '" + location + "', "
+                + "contact = '" + contact + "', type = '" + type + "', url = '" + url + "',start = '" + startTime + "', "
+                + "end = '" + endTime + "', createDate = '" + createDate + "', createdBy = '" + createdBy + "', "
+                + "lastUpdateBy = '" + lastUpdateBy + "' WHERE appointmentId =  " + appointment.getAppointmentId();
 
         statement.executeUpdate(sqlAppStmt);
     }

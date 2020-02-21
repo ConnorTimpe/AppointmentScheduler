@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -61,17 +62,27 @@ public class MainScreenController implements Initializable {
 
     @FXML
     private TableColumn<Appointment, Instant> AppDateCol;
-    
 
     @FXML
     void OnActionGoToAddCustomer(ActionEvent event) throws IOException {
         changeScreens(event, "/View/AddCustomer.fxml");
     }
 
+    static Customer customerToModify;
+
     @FXML
     void OnActionGoToModifyCustomer(ActionEvent event) throws IOException {
-        changeScreens(event, "/View/UpdateCustomer.fxml");
+        customerToModify = CustomerTableView.getSelectionModel().getSelectedItem();
+        if (customerToModify == null) {
+            String alertTitle = "Please select a customer";
+            String alertContent = "No customer selected. Please choose a customer to modify and try again.";
+            createErrorMessage(alertTitle, alertContent);
+        } else {
+            changeScreens(event, "/View/UpdateCustomer.fxml");
+        }
     }
+
+    static Appointment appointmentToModify;
 
     @FXML
     void OnActionGoToAddApp(ActionEvent event) throws IOException {
@@ -80,7 +91,14 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void OnActionGoToModifyApp(ActionEvent event) throws IOException {
-        changeScreens(event, "/View/UpdateAppointment.fxml");
+        appointmentToModify = AppointmentTableView.getSelectionModel().getSelectedItem();
+        if (appointmentToModify == null) {
+            String alertTitle = "Please select an appointment";
+            String alertContent = "No appointment selected. Please choose an appoitment to modify and try again.";
+            createErrorMessage(alertTitle, alertContent);
+        } else {
+            changeScreens(event, "/View/UpdateAppointment.fxml");
+        }
     }
 
     @FXML
@@ -93,9 +111,23 @@ public class MainScreenController implements Initializable {
 
     }
 
+    static Customer viewedCustomer;
+    static Appointment viewedAppointment;
+
     @FXML
-    void OnActionViewCustomer(ActionEvent event) {
-        //Display modify customer screen but with editing disabled
+    void OnActionViewCustomer(ActionEvent event) throws IOException {
+        viewedAppointment = AppointmentTableView.getSelectionModel().getSelectedItem();
+        if (viewedAppointment == null) {
+            String alertTitle = "Please select an appointment";
+            String alertContent = "Please select an appointment to view its associated customer and try again.";
+            createErrorMessage(alertTitle, alertContent);
+        } else {
+            viewedCustomer = customerList.stream()
+                    .filter((Customer c) -> c.getId() == viewedAppointment.getCustomerId())
+                    .findFirst().orElse(null);
+
+            changeScreens(event, "/View/ViewCustomer.fxml");
+        }
 
     }
 
@@ -157,7 +189,7 @@ public class MainScreenController implements Initializable {
     private void createCustomerTable() throws SQLException {
         customerList.clear();
         CustomerTableView.getItems().clear();
-        
+
         customerList = Database.buildCustomerList();
         CustomerTableView.setItems(customerList);
     }
