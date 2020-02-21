@@ -5,8 +5,10 @@
  */
 package Controller;
 
+import Model.Database;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -49,7 +51,7 @@ public class LogInScreenController implements Initializable {
     private Label PleaseLogInLabel;
 
     @FXML
-    void OnActionLogIn(ActionEvent event) throws IOException {
+    void OnActionLogIn(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
         if (validCredentials()) {
             connectToDatabase();
             goToMainScreen(event);
@@ -66,8 +68,8 @@ public class LogInScreenController implements Initializable {
                 && LogInPasswordText.getText().equals(PASSWORD);
     }
 
-    private void connectToDatabase() {
-        System.out.println("Connected");
+    private void connectToDatabase() throws ClassNotFoundException, SQLException {
+        Database.makeConnection();
     }
 
     private void goToMainScreen(ActionEvent event) throws IOException {

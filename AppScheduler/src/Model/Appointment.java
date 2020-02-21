@@ -15,9 +15,10 @@ import javafx.collections.ObservableList;
  * @author Connor Timpe
  */
 public class Appointment {
-    
+
     int appointmentId; //auto incremented in database
     int customerId;
+    String customerName;
     int userId = 1;
     String title;
     String description;
@@ -25,33 +26,34 @@ public class Appointment {
     String contact;
     String type;
     String url;
-    LocalDateTime startTime; 
+    LocalDateTime startTime;
     LocalDateTime endTime;
     LocalDateTime createDate;
     String createdBy;
     LocalDateTime lastUpdate; //auto updated in database
     String lastUpdateBy;
-    
+
     String formattedStart;
     LocalDate date;
-    
-    public Appointment()
-    {
+
+    public Appointment() {
         appointmentId = -1;
         customerId = -1;
-        userId = -1;
+        customerName = null;
+        userId = 1;
         title = null;
         description = null;
         location = null;
-        contact = null;   
-        type = null;      
-        url = null;      
+        contact = null;
+        type = null;
+        url = null;
         startTime = null;
         endTime = null;
         createDate = LocalDateTime.now();
         createdBy = null;
-        lastUpdateBy = null;   
+        lastUpdateBy = null;
         formattedStart = null;
+        date = null;
     }
 
     public int getAppointmentId() {
@@ -68,6 +70,14 @@ public class Appointment {
 
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public int getUserId() {
@@ -189,7 +199,6 @@ public class Appointment {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-    
-    
+
     static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 }

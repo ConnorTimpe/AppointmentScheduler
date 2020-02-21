@@ -10,6 +10,7 @@ import Model.Database;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +18,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -53,7 +56,17 @@ public class AddCustomerController implements Initializable {
 
     @FXML
     void OnActionReturnToMainMenu(ActionEvent event) throws IOException {
-        changeScreens(event, "/View/MainScreen.fxml");
+        String alertTitle = "Confirm";
+        String alertContent = "Are you sure you'd like to go to the main menu? All entered data will be lost.";
+        
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+        
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            changeScreens(event, "/View/MainScreen.fxml");
+        }        
     }
 
     @FXML
@@ -99,5 +112,5 @@ public class AddCustomerController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }
- 
+
 }
