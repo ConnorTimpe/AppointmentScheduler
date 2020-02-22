@@ -6,9 +6,22 @@
 package Controller;
 
 import Model.Database;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -54,6 +67,7 @@ public class LogInScreenController implements Initializable {
     void OnActionLogIn(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
         if (validCredentials()) {
             connectToDatabase();
+            recordLogin();
             goToMainScreen(event);
         } else {
             createErrorMessage();
@@ -70,6 +84,22 @@ public class LogInScreenController implements Initializable {
 
     private void connectToDatabase() throws ClassNotFoundException, SQLException {
         Database.makeConnection();
+    }
+
+    private void recordLogin() throws FileNotFoundException, UnsupportedEncodingException, IOException {
+        Charset utf8 = StandardCharsets.UTF_8;
+        String user = "test";
+        String fileName = "userActivity.txt";
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy HH:mm");
+        String time = dateTime.format(formatter);
+
+        String logText = "User: " + user + " logged in at " + time + ".\n";
+        List<String> lines = Arrays.asList(logText);
+
+        Files.write(Paths.get(fileName), lines, utf8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        System.out.println("Wrote " + logText);
     }
 
     private void goToMainScreen(ActionEvent event) throws IOException {
@@ -103,6 +133,7 @@ public class LogInScreenController implements Initializable {
         //Locale.setDefault(new Locale("jp", "JP"));
 
         localizeText();
+
     }
 
     private void localizeText() {
@@ -113,6 +144,7 @@ public class LogInScreenController implements Initializable {
         PasswordLabel.setText(loginResourceBundle.getString("PasswordLabel"));
         LogInButton.setText(loginResourceBundle.getString("LogInButton"));
         PleaseLogInLabel.setText(loginResourceBundle.getString("PleaseLogInLabel"));
+
     }
 
 }
