@@ -19,11 +19,13 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -129,8 +131,9 @@ public class LogInScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //Uncomment below to set default locale to Japanese
-        //Locale.setDefault(new Locale("jp", "JP"));
+        //Uncomment below to set default locale and timezone to Japanese
+            //Locale.setDefault(new Locale("jp", "JP"));
+            //TimeZone.setDefault(TimeZone.getTimeZone("Japan"));
 
         localizeText();
 

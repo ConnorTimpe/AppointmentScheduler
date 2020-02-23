@@ -7,6 +7,7 @@ package Model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -26,8 +27,8 @@ public class Appointment {
     String contact;
     String type;
     String url;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
+    ZonedDateTime startTime;
+    ZonedDateTime endTime;
     LocalDateTime createDate;
     String createdBy;
     LocalDateTime lastUpdate; //auto updated in database
@@ -136,19 +137,19 @@ public class Appointment {
         this.url = url;
     }
 
-    public LocalDateTime getStartTime() {
+    public ZonedDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(ZonedDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public ZonedDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(ZonedDateTime endTime) {
         this.endTime = endTime;
     }
 

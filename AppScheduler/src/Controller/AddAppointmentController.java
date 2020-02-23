@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -119,6 +121,8 @@ public class AddAppointmentController implements Initializable {
         LocalDate appDate = LocalDate.of(year, month, day);
         LocalDateTime appStartDateTime = LocalDateTime.of(appDate, appStartTime);
         LocalDateTime appEndDateTime = LocalDateTime.of(appDate, appEndTime);
+        ZonedDateTime utcStartDateTime = appStartDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+        ZonedDateTime utcEndDateTime = appEndDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
 
         //Get customer id
         int customerId = 0;
@@ -138,8 +142,8 @@ public class AddAppointmentController implements Initializable {
         app.setContact(contact);
         app.setType(type);
 
-        app.setStartTime(appStartDateTime);
-        app.setEndTime(appEndDateTime);
+        app.setStartTime(utcStartDateTime);
+        app.setEndTime(utcEndDateTime);
 
         Database.addAppointment(app);
 

@@ -10,9 +10,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -287,17 +290,17 @@ public class Database {
                 newApp.setCustomerName(rsCustomerName.getString("customerName"));
             }
 
-            Instant startInstant = rs.getTimestamp("start").toInstant();
-            Instant endInstant = rs.getTimestamp("end").toInstant();
+            Instant startInstant = rs.getTimestamp("start").toLocalDateTime().toInstant(ZoneOffset.UTC);
+            Instant endInstant = rs.getTimestamp("end").toLocalDateTime().toInstant(ZoneOffset.UTC);
 
-            LocalDateTime startTime = LocalDateTime.ofInstant(startInstant, ZoneOffset.UTC);
-            LocalDateTime endTime = LocalDateTime.ofInstant(endInstant, ZoneOffset.UTC);
+            ZonedDateTime localStartDate = startInstant.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+            ZonedDateTime localEndDate = endInstant.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
 
             DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm MM/dd/yyyy");
-            String formattedStart = startTime.format(formater);
+            String formattedStart = localStartDate.format(formater);
 
-            newApp.setStartTime(startTime);
-            newApp.setEndTime(endTime);
+            newApp.setStartTime(localStartDate);
+            newApp.setEndTime(localEndDate);
             newApp.setFormattedStart(formattedStart);
 
             appointmentList.add(newApp);
@@ -317,8 +320,13 @@ public class Database {
         String url = Integer.toString(customerId);
         LocalDateTime createDate = LocalDateTime.now();
         String createdBy = "Test user";
-        LocalDateTime startTime = appointment.getStartTime();
-        LocalDateTime endTime = appointment.getEndTime();
+
+        ZonedDateTime utcStartTime = appointment.getStartTime();
+        ZonedDateTime utcEndTime = appointment.getEndTime();
+
+        Timestamp startTimeStamp = Timestamp.valueOf(utcStartTime.toLocalDateTime());
+        Timestamp endTimeStamp = Timestamp.valueOf(utcEndTime.toLocalDateTime());
+
         String lastUpdateBy = "Test user";
 
         Statement statement = connection.createStatement();
@@ -335,8 +343,8 @@ public class Database {
                 + "'" + contact + "', "
                 + "'" + type + "', "
                 + "'" + url + "', "
-                + "'" + startTime + "', "
-                + "'" + endTime + "', "
+                + "'" + startTimeStamp + "', "
+                + "'" + endTimeStamp + "', "
                 + "'" + createDate + "', "
                 + "'" + createdBy + "', "
                 + "'" + lastUpdateBy + "')";
@@ -355,16 +363,20 @@ public class Database {
         String url = Integer.toString(customerId);
         LocalDateTime createDate = LocalDateTime.now();
         String createdBy = "Test user";
-        LocalDateTime startTime = appointment.getStartTime();
-        LocalDateTime endTime = appointment.getEndTime();
+        ZonedDateTime startTime = appointment.getStartTime();
+        ZonedDateTime endTime = appointment.getEndTime();
+        
+        Timestamp startTimeStamp = Timestamp.valueOf(startTime.toLocalDateTime());
+        Timestamp endTimeStamp = Timestamp.valueOf(endTime.toLocalDateTime());
+        
         String lastUpdateBy = "Test user";
 
         Statement statement = connection.createStatement();
 
         String sqlAppStmt = "UPDATE appointment SET customerId = '" + customerId + "', userId = '" + userId + "', "
                 + "title = '" + title + "', description = '" + description + "', location = '" + location + "', "
-                + "contact = '" + contact + "', type = '" + type + "', url = '" + url + "',start = '" + startTime + "', "
-                + "end = '" + endTime + "', createDate = '" + createDate + "', createdBy = '" + createdBy + "', "
+                + "contact = '" + contact + "', type = '" + type + "', url = '" + url + "',start = '" + startTimeStamp + "', "
+                + "end = '" + endTimeStamp + "', createDate = '" + createDate + "', createdBy = '" + createdBy + "', "
                 + "lastUpdateBy = '" + lastUpdateBy + "' WHERE appointmentId =  " + appointment.getAppointmentId();
 
         statement.executeUpdate(sqlAppStmt);
