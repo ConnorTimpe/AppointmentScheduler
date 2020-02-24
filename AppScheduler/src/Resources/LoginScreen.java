@@ -24,7 +24,9 @@ static final Object[][] contents = {
     {"LogInButton", "Log In"},
     {"PleaseLogInLabel", "Please Log In"},
     {"alertTitle", "Incorrect Login Information"},
-    {"alertContent", "Incorrect username or password. Please try again. \n (Username and password are case sensitive) \n Username = test \n Password = test"}
+    {"alertContent", "Incorrect username or password. Please try again. \n (Username and password are case sensitive) \n Username = test \n Password = test"},
+    {"infoTitle", "Upcoming appointment"},
+    {"infoContent", "You have an upcoming appointment within the next 15 minutes."}
 
 };
 }

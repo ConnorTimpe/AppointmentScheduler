@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Model.Appointment;
 import Model.Database;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,12 +21,14 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -70,6 +73,7 @@ public class LogInScreenController implements Initializable {
         if (validCredentials()) {
             connectToDatabase();
             recordLogin();
+            checkUpcomingAppointment();
             goToMainScreen(event);
         } else {
             createErrorMessage();
@@ -104,6 +108,28 @@ public class LogInScreenController implements Initializable {
         System.out.println("Wrote " + logText);
     }
 
+    private void checkUpcomingAppointment() throws SQLException {
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        int currentYear = currentTime.getYear();
+        int currentMonth = currentTime.getMonthValue();
+        int currentDay = currentTime.getDayOfMonth();
+
+        ObservableList<Appointment> appointmentList = Database.buildAppointmentList();
+        int alertTime = 15; //15 minutes
+
+        for (Appointment appointment : appointmentList) {
+            if (((appointment.getStartTime().getYear() == currentYear)
+                    && (appointment.getStartTime().getMonthValue() == currentMonth)
+                    && (appointment.getStartTime().getDayOfMonth() == currentDay))) {
+                if ((appointment.getStartTime().getHour() - currentTime.getHour() == 0)
+                        && appointment.getStartTime().getMinute() - currentTime.getMinute() <= alertTime) {
+                    createAlertMessage();
+                }
+            }
+
+        }
+    }
+
     private void goToMainScreen(ActionEvent event) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainScreen.fxml"));
@@ -126,14 +152,24 @@ public class LogInScreenController implements Initializable {
         alert.showAndWait();
     }
 
+    private void createAlertMessage() {
+        String alertTitle = loginResourceBundle.getString("infoTitle");
+        String alertContent = loginResourceBundle.getString("infoContent");
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+        alert.showAndWait();
+    }
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //Uncomment below to set default locale and timezone to Japanese
-            //Locale.setDefault(new Locale("jp", "JP"));
-            //TimeZone.setDefault(TimeZone.getTimeZone("Japan"));
+        //Locale.setDefault(new Locale("jp", "JP"));
+        //TimeZone.setDefault(TimeZone.getTimeZone("Japan"));
 
         localizeText();
 
