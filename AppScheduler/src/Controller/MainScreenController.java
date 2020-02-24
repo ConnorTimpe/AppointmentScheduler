@@ -107,7 +107,8 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    void OnActionViewCalendar(ActionEvent event) {
+    void OnActionViewCalendar(ActionEvent event) throws IOException {
+        changeScreens(event, "/View/ViewCalendar.fxml");
 
     }
 
