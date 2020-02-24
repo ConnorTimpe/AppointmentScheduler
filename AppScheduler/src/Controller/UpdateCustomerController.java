@@ -84,18 +84,66 @@ public class UpdateCustomerController implements Initializable {
             active = 0;
         }
 
-        customerToModify.setName(name);
-        customerToModify.setPhoneNumber(phoneNumber);
-        customerToModify.setAddress(address);
-        customerToModify.setAddress2(address2);
-        customerToModify.setPostalCode(postalCode);
-        customerToModify.setCity(city);
-        customerToModify.setCountry(country);
-        customerToModify.setActive(active);
+        if (validData(name, phoneNumber, address, postalCode, city, country)) {
 
-        Database.modifyCustomer(customerToModify);
+            customerToModify.setName(name);
+            customerToModify.setPhoneNumber(phoneNumber);
+            customerToModify.setAddress(address);
+            customerToModify.setAddress2(address2);
+            customerToModify.setPostalCode(postalCode);
+            customerToModify.setCity(city);
+            customerToModify.setCountry(country);
+            customerToModify.setActive(active);
 
-        changeScreens(event, "/View/MainScreen.fxml");
+            Database.modifyCustomer(customerToModify);
+
+            changeScreens(event, "/View/MainScreen.fxml");
+        }
+    }
+
+    private boolean validData(String name, String phoneNumber, String address, String postalCode, String city, String country) {
+        String alertTitle = "Error. Invalid entry.";
+        String checkForDigit = ".*\\d.*";
+
+        if (name.matches(checkForDigit) || name.length() == 0) {
+            String alertContent = "Error. Please enter a valid name.";
+            createErrorMessage(alertTitle, alertContent);
+            return false;
+        }
+        if (!phoneNumber.matches("[0-9]+") || phoneNumber.length() != 10) {
+            String alertContent = "Error. Please enter a valid phone number.";
+            createErrorMessage(alertTitle, alertContent);
+            return false;
+        }
+        if (address.length() == 0) {
+            String alertContent = "Error. Please enter a valid address.";
+            createErrorMessage(alertTitle, alertContent);
+            return false;
+        }
+        if (!postalCode.matches("[0-9]+") || postalCode.length() != 5) {
+            String alertContent = "Error. Please enter a valid postal code.";
+            createErrorMessage(alertTitle, alertContent);
+            return false;
+        }
+        if (city.matches(checkForDigit) || city.length() == 0) {
+            String alertContent = "Error. Please enter a valid city.";
+            createErrorMessage(alertTitle, alertContent);
+            return false;
+        }
+        if (country.matches(checkForDigit) || country.length() == 0) {
+            String alertContent = "Error. Please enter a valid country.";
+            createErrorMessage(alertTitle, alertContent);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void createErrorMessage(String alertTitle, String alertContent) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+        alert.showAndWait();
     }
 
     @FXML

@@ -95,8 +95,7 @@ public class AddCustomerController implements Initializable {
             Database.addCustomer(newCustomer);
 
             changeScreens(event, "/View/MainScreen.fxml");
-        } else { //error message}}
-        }
+        } 
     }
 
     private boolean validData(String name, String phoneNumber, String address, String postalCode, String city, String country) {
