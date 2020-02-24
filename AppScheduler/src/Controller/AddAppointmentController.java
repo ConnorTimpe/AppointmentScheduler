@@ -11,6 +11,7 @@ import Model.Database;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -124,33 +125,88 @@ public class AddAppointmentController implements Initializable {
         ZonedDateTime utcStartDateTime = appStartDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
         ZonedDateTime utcEndDateTime = appEndDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
 
-        //Get customer id
-        int customerId = 0;
+        if (isOverlappingOtherAppointment(appStartDateTime, appEndDateTime)) {
+            String alertTitle = "Overlapping appointments";
+            String alertContent = "This appointment overlaps with another scheduled appointment. Please select a new time.";
+            createErrorMessage(alertTitle, alertContent);
+        } else {
 
-        for (Customer customer : customerList) {
-            if (customer.getName().equals(chosenCustomerName)) {
-                customerId = customer.getId();
+            //Get customer id
+            int customerId = 0;
+
+            for (Customer customer : customerList) {
+                if (customer.getName().equals(chosenCustomerName)) {
+                    customerId = customer.getId();
+                }
             }
+
+            Appointment app = new Appointment();
+
+            app.setCustomerId(customerId);
+            app.setTitle(title);
+            app.setDescription(description);
+            app.setLocation(location);
+            app.setContact(contact);
+            app.setType(type);
+
+            app.setStartTime(utcStartDateTime);
+            app.setEndTime(utcEndDateTime);
+
+            Database.addAppointment(app);
+
+            changeScreens(event, "/View/MainScreen.fxml");
         }
-
-        Appointment app = new Appointment();
-
-        app.setCustomerId(customerId);
-        app.setTitle(title);
-        app.setDescription(description);
-        app.setLocation(location);
-        app.setContact(contact);
-        app.setType(type);
-
-        app.setStartTime(utcStartDateTime);
-        app.setEndTime(utcEndDateTime);
-
-        Database.addAppointment(app);
-
-        changeScreens(event, "/View/MainScreen.fxml");
     }
 
-    public void changeScreens(ActionEvent event, String destination) throws IOException {
+    private boolean isOverlappingOtherAppointment(LocalDateTime appStartDateTime, LocalDateTime appEndDateTime) throws SQLException {
+        ObservableList<Appointment> appointmentList = Database.buildAppointmentList();
+
+        int newAppYear = appStartDateTime.getYear();
+        int newAppMonth = appStartDateTime.getMonthValue();
+        int newAppDay = appStartDateTime.getDayOfMonth();
+
+        int newAppStartHour = appStartDateTime.getHour();
+        int newAppStartMinutes = appStartDateTime.getMinute();
+        LocalTime newAppStartTime = LocalTime.of(newAppStartHour, newAppStartMinutes);
+
+        int newAppEndHour = appEndDateTime.getHour();
+        int newAppEndMinutes = appEndDateTime.getMinute();
+        LocalTime newAppEndTime = LocalTime.of(newAppEndHour, newAppEndMinutes);
+
+        for (Appointment appointment : appointmentList) {
+            int appYear = appointment.getStartTime().getYear();
+            int appMonth = appointment.getStartTime().getMonthValue();
+            int appDay = appointment.getStartTime().getDayOfMonth();
+
+            int appStartHour = appointment.getStartTime().getHour();
+            int appStartMinutes = appointment.getStartTime().getMinute();
+            LocalTime appStartTime = LocalTime.of(appStartHour, appStartMinutes);
+
+            int appEndHour = appointment.getEndTime().getHour();
+            int appEndMinutes = appointment.getEndTime().getMinute();
+            LocalTime appEndTime = LocalTime.of(appEndHour, appEndMinutes);
+
+            if (appYear == newAppYear && appMonth == newAppMonth && appDay == newAppDay) {
+                return ((newAppStartTime.isBefore(appEndTime))
+                        && (newAppEndTime.isAfter(appStartTime)));
+//                if ((newAppStartTime.isBefore(appStartTime) && newAppEndTime.isBefore(appEndTime))
+//                        || (newAppStartTime.isAfter(appStartTime) && newAppEndTime.isAfter(appEndTime))) {
+//                    return false; //Appointments do not overlap
+//                }
+//                return true; //Appointments overlap
+            }
+        }
+        return false; //Appointments do not overlap
+    }
+
+    private void createErrorMessage(String alertTitle, String alertContent) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+        alert.showAndWait();
+    }
+
+    private void changeScreens(ActionEvent event, String destination) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
         Parent root = loader.load();
@@ -184,11 +240,11 @@ public class AddAppointmentController implements Initializable {
             hoursList.clear();
             minutesList.clear();
 
-            //Could change hours to only display buisness hours
-            final int HOURS_PER_DAY = 24;
+            final int BUSINESS_HOURS_START = 9;
+            final int BUSINESS_HOURS_END = 17;
             final int MINUTES_PER_HOUR = 60;
 
-            for (int i = 0; i <= HOURS_PER_DAY; i++) {
+            for (int i = BUSINESS_HOURS_START; i < BUSINESS_HOURS_END; i++) {
                 hoursList.add(i);
             }
 
