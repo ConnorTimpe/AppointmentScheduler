@@ -21,6 +21,7 @@ public class Appointment {
     int customerId;
     String customerName;
     int userId = 1;
+    String userName;
     String title;
     String description;
     String location;
@@ -42,6 +43,7 @@ public class Appointment {
         customerId = -1;
         customerName = null;
         userId = 1;
+        userName = "Test";
         title = null;
         description = null;
         location = null;
@@ -87,6 +89,14 @@ public class Appointment {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getTitle() {

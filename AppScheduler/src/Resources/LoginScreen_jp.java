@@ -26,8 +26,8 @@ static final Object[][] contents = {
     {"PleaseLogInLabel", "ログインしてください"},
     {"alertTitle", "ログイン情報が違います"},
     {"alertContent", "ユーザーネームかパスワードに間違いがあります。やり直してください。"},
-    {"infoTitle", "Upcoming appointment"},
-    {"infoContent", "You have an upcoming appointment within the next 15 minutes."}
+    {"infoTitle", "もうすぐミーティングです。"},
+    {"infoContent", "15分後にミーティングを開始します。"}
 
 };
 }

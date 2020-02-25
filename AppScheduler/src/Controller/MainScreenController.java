@@ -102,8 +102,8 @@ public class MainScreenController implements Initializable {
     }
 
     @FXML
-    void OnActionGoToReports(ActionEvent event) {
-
+    void OnActionGoToReports(ActionEvent event) throws IOException {
+        changeScreens(event, "/View/Reports.fxml");
     }
 
     @FXML

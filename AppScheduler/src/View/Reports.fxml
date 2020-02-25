@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="413.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ReportsController">
+   <children>
+      <VBox alignment="CENTER" layoutX="35.0" layoutY="108.0" prefHeight="202.0" prefWidth="601.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="492.0">
+               <children>
+                  <Label prefHeight="27.0" prefWidth="256.0" text="Number of Appointment types:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ComboBox fx:id="appTypesMonthComboBox" prefWidth="150.0" promptText="Choose Month">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <Button mnemonicParsing="false" onAction="#OnActionCreateAppTypesReport" prefHeight="38.0" prefWidth="91.0" text="Go">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="492.0">
+               <children>
+                  <Label prefHeight="27.0" prefWidth="256.0" text="View Schedule:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ComboBox fx:id="scheduleUserComboBox" prefWidth="150.0" promptText="Choose User">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <Button mnemonicParsing="false" onAction="#OnActionCreateUserScheduleReport" prefHeight="38.0" prefWidth="91.0" text="Go">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="492.0">
+               <children>
+                  <Label prefHeight="27.0" prefWidth="256.0" text="Average Appointment Length:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ComboBox fx:id="appLengthMonthComboBox" prefWidth="150.0" promptText="Choose Month">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <Button mnemonicParsing="false" onAction="#OnActionCreateAppAverageLengthReport" prefHeight="38.0" prefWidth="91.0" text="Go">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" layoutX="82.0" layoutY="35.0" prefHeight="73.0" prefWidth="508.0">
+         <children>
+            <Label text="Reports">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <Button layoutX="288.0" layoutY="327.0" mnemonicParsing="false" onAction="#OnActionGoToMainMenu" prefHeight="44.0" prefWidth="96.0" text="Cancel">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
