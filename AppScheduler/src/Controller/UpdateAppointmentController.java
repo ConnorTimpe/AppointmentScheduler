@@ -125,29 +125,79 @@ public class UpdateAppointmentController implements Initializable {
         ZonedDateTime utcStartDateTime = appStartDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
         ZonedDateTime utcEndDateTime = appEndDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
 
-        //Get customer id
-        int customerId = 0;
+        if (isOverlappingOtherAppointment(appStartDateTime, appEndDateTime)) {
+            String alertTitle = "Overlapping appointments";
+            String alertContent = "This appointment overlaps with another scheduled appointment. Please select a new time.";
+            createErrorMessage(alertTitle, alertContent);
+        } else {
 
-        for (Customer customer : customerList) {
-            if (customer.getName().equals(chosenCustomerName)) {
-                customerId = customer.getId();
+            //Get customer id
+            int customerId = 0;
+
+            for (Customer customer : customerList) {
+                if (customer.getName().equals(chosenCustomerName)) {
+                    customerId = customer.getId();
+                }
+            }
+
+            appointmentToModify.setCustomerId(customerId);
+            appointmentToModify.setCustomerName(chosenCustomerName);
+            appointmentToModify.setTitle(title);
+            appointmentToModify.setDescription(description);
+            appointmentToModify.setLocation(location);
+            appointmentToModify.setContact(contact);
+            appointmentToModify.setType(type);
+
+            appointmentToModify.setStartTime(utcStartDateTime);
+            appointmentToModify.setEndTime(utcEndDateTime);
+
+            Database.modifyAppointment(appointmentToModify);
+
+            changeScreens(event, "/View/MainScreen.fxml");
+        }
+    }
+
+    private boolean isOverlappingOtherAppointment(LocalDateTime appStartDateTime, LocalDateTime appEndDateTime) throws SQLException {
+        ObservableList<Appointment> appointmentList = Database.buildAppointmentList();
+
+        int newAppYear = appStartDateTime.getYear();
+        int newAppMonth = appStartDateTime.getMonthValue();
+        int newAppDay = appStartDateTime.getDayOfMonth();
+
+        int newAppStartHour = appStartDateTime.getHour();
+        int newAppStartMinutes = appStartDateTime.getMinute();
+        LocalTime newAppStartTime = LocalTime.of(newAppStartHour, newAppStartMinutes);
+
+        int newAppEndHour = appEndDateTime.getHour();
+        int newAppEndMinutes = appEndDateTime.getMinute();
+        LocalTime newAppEndTime = LocalTime.of(newAppEndHour, newAppEndMinutes);
+
+        for (Appointment appointment : appointmentList) {
+            int appYear = appointment.getStartTime().getYear();
+            int appMonth = appointment.getStartTime().getMonthValue();
+            int appDay = appointment.getStartTime().getDayOfMonth();
+
+            int appStartHour = appointment.getStartTime().getHour();
+            int appStartMinutes = appointment.getStartTime().getMinute();
+            LocalTime appStartTime = LocalTime.of(appStartHour, appStartMinutes);
+
+            int appEndHour = appointment.getEndTime().getHour();
+            int appEndMinutes = appointment.getEndTime().getMinute();
+            LocalTime appEndTime = LocalTime.of(appEndHour, appEndMinutes);
+
+            if (appYear == newAppYear && appMonth == newAppMonth && appDay == newAppDay) {
+                return ((newAppStartTime.isBefore(appEndTime))
+                        && (newAppEndTime.isAfter(appStartTime)));
             }
         }
+        return false; //Appointments do not overlap
+    }
 
-        appointmentToModify.setCustomerId(customerId);
-        appointmentToModify.setCustomerName(chosenCustomerName);
-        appointmentToModify.setTitle(title);
-        appointmentToModify.setDescription(description);
-        appointmentToModify.setLocation(location);
-        appointmentToModify.setContact(contact);
-        appointmentToModify.setType(type);
-
-        appointmentToModify.setStartTime(utcStartDateTime);
-        appointmentToModify.setEndTime(utcEndDateTime);
-
-        Database.modifyAppointment(appointmentToModify);
-
-        changeScreens(event, "/View/MainScreen.fxml");
+    private void createErrorMessage(String alertTitle, String alertContent) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(alertTitle);
+        alert.setContentText(alertContent);
+        alert.showAndWait();
     }
 
     public void changeScreens(ActionEvent event, String destination) throws IOException {

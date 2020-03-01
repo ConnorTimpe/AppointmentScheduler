@@ -189,11 +189,6 @@ public class AddAppointmentController implements Initializable {
             if (appYear == newAppYear && appMonth == newAppMonth && appDay == newAppDay) {
                 return ((newAppStartTime.isBefore(appEndTime))
                         && (newAppEndTime.isAfter(appStartTime)));
-//                if ((newAppStartTime.isBefore(appStartTime) && newAppEndTime.isBefore(appEndTime))
-//                        || (newAppStartTime.isAfter(appStartTime) && newAppEndTime.isAfter(appEndTime))) {
-//                    return false; //Appointments do not overlap
-//                }
-//                return true; //Appointments overlap
             }
         }
         return false; //Appointments do not overlap

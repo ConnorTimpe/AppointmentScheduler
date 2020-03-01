@@ -124,7 +124,7 @@ public class MainScreenController implements Initializable {
             createErrorMessage(alertTitle, alertContent);
         } else {
             viewedCustomer = customerList.stream()
-                    .filter((Customer c) -> c.getId() == viewedAppointment.getCustomerId())
+                    .filter((Customer c) -> c.getId() == viewedAppointment.getCustomerId()) //Lambda function used to reduce amount of code.
                     .findFirst().orElse(null);
 
             changeScreens(event, "/View/ViewCustomer.fxml");
@@ -160,7 +160,7 @@ public class MainScreenController implements Initializable {
     }
 
     private boolean hasAppointment(Customer selectedCustomer) {
-        return appointmentList.stream().anyMatch((appointment) -> (appointment.getCustomerId() == selectedCustomer.getId()));
+        return appointmentList.stream().anyMatch((appointment) -> (appointment.getCustomerId() == selectedCustomer.getId())); //Lambda function used to improve readability.
     }
 
     @FXML
