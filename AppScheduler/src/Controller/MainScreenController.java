@@ -149,11 +149,18 @@ public class MainScreenController implements Initializable {
             String alertTitle = "Error";
             String alertContent = "Please select a customer to delete.";
             createErrorMessage(alertTitle, alertContent);
-        } //else if selected customer has an appointment -- make error message
-        else {
+        } else if (hasAppointment(selectedCustomer)) {
+            String alertTitle = "Error";
+            String alertContent = "This customer has an upcoming appointment. Please cancel that appointment before deleting this customer.";
+            createErrorMessage(alertTitle, alertContent);
+        } else {
             Database.deleteCustomer(selectedCustomer);
             customerList.remove(selectedCustomer);
         }
+    }
+
+    private boolean hasAppointment(Customer selectedCustomer) {
+        return appointmentList.stream().anyMatch((appointment) -> (appointment.getCustomerId() == selectedCustomer.getId()));
     }
 
     @FXML
@@ -163,8 +170,7 @@ public class MainScreenController implements Initializable {
             String alertTitle = "Error";
             String alertContent = "Please select an appointment to delete.";
             createErrorMessage(alertTitle, alertContent);
-        }//else if selected appointment has an assigned customer -- make error message
-        else {
+        } else {
             Database.deleteAppointment(selectedAppointment);
             appointmentList.remove(selectedAppointment);
         }
